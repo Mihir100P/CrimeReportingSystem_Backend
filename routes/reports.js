@@ -4,7 +4,7 @@ const Report = require('../models/Report');
 const { protect, police } = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
-
+const mongoose = require('mongoose');
 // Storage configuration for multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -139,6 +139,35 @@ router.get('/:id', protect, async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 });
+
+// @route   GET /api/reports/:id
+// @desc    Get a single report by ID
+// @access  Private
+
+
+router.delete('/:id', protect, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // ✅ Validate if the ID is a valid MongoDB ObjectID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid report ID format' });
+    }
+
+    const deletedReport = await Report.findByIdAndDelete(id);
+
+    if (!deletedReport) {
+      return res.status(404).json({ message: 'Report not found' });
+    }
+
+    res.json({ message: 'Report deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting report:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
 
 
 module.exports = router;
