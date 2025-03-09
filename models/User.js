@@ -26,7 +26,10 @@ const UserSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  credits: { 
+    type: Number, default: 0 
+  },
 });
 
 // Password hashing middleware

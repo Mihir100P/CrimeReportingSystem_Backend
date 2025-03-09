@@ -81,17 +81,12 @@ router.post('/login', async (req, res) => {
 // @desc    Get user profile
 // @access  Private
 router.get('/profile/:id', protect, async (req, res) => {
-  const {id} = req.params;
+  const { id } = req.params;
   try {
     const user = await User.findById(id);
 
     if (user) {
-      res.json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      });
+      res.json(user);
     } else {
       res.status(404).json({ message: 'User not found' });
     }
@@ -100,5 +95,24 @@ router.get('/profile/:id', protect, async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
+
+router.put("/update-points/:id", protect, async (req, res) => {
+  try {
+    const { points } = req.body; 
+
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.credits = (user.credits || 0) + points; 
+    await user.save();
+
+    res.json({ message: "Points updated successfully", credits: user.credits });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 
 module.exports = router;
