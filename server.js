@@ -37,12 +37,13 @@ const server = app.listen(PORT, () =>
 );
 
 // Socket.io setup for real-time features
-const io = require('socket.io')(server, {
+const io = require("socket.io")(server, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:3000',
-    methods: ['GET', 'POST']
+    origin: ["http://localhost:3000", "http://localhost:5173"], 
+    methods: ["GET", "POST"]
   }
 });
+
 
 io.on('connection', (socket) => {
   console.log('New client connected');
@@ -58,6 +59,7 @@ io.on('connection', (socket) => {
   
   // Handle alerts
   socket.on('alert', (data) => {
+    console.log('New alert:', data);
     io.emit('newAlert', data);
   });
 });
